@@ -74,6 +74,7 @@
     <h2>Que souhaitez-vous faire ?</h2>
     <button onclick="showPage('depense-form')">Justifier des dépenses</button>
     <button onclick="showPage('commande-form')">Déclarer une commande</button>
+    <button onclick="logout()">Se déconnecter</button>
   </div>
 
   <div id="depense-form" class="hidden">
@@ -194,7 +195,7 @@
       embeds: [{
         title: type === "commande" ? "\ud83d\udce6 Commande enregistrée" : "\ud83d\udcb3 Dépense justifiée",
         color: type === "commande" ? 0xf39c12 : 0xe74c3c,
-        description: `**\ud83d\udc64** ${nom} │ **\ud83e\uddfe** ${frais} │ **\u270d\ufe0f** ${quantite} │ **\ud83d\udcb5** ${montant}$ │ **\ud83d\udcb0 Total :** ${total}$`,
+        description: `**\ud83d\udc64** ${nom} │ **\ud83e\uddfe** ${frais} │ **\u270d\ufe0f** ${quantite} │ **\ud83d\udcb5** ${montant}$`,
         footer: {
           text: `Horodateur : ${new Date().toLocaleString("fr-FR")}`
         }
@@ -211,6 +212,13 @@
   }
 
   window.onload = () => {
+    // Garde session active pendant 10 minutes
+    const lastSession = localStorage.getItem("ltd_session");
+    if (lastSession && (Date.now() - parseInt(lastSession)) < 10 * 60 * 1000) {
+      document.getElementById('accueil').classList.add('hidden');
+      document.getElementById('menu').classList.remove('hidden');
+    }
+
     ['depense-nom', 'commande-nom'].forEach(id => {
       const select = document.getElementById(id);
       noms.forEach(n => {
@@ -220,6 +228,12 @@
       });
     });
   };
+  
+  function logout() {
+  localStorage.removeItem("ltd_session");
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('accueil').classList.remove('hidden');
+}
 </script>
 </body>
 </html>
