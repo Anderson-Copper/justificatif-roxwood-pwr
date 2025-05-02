@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>LTD Paleto - Interface GitHub</title>
+  <title>LTD Paleto</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -79,7 +79,7 @@
   <div id="depense-form" class="hidden">
     <h2>Frais de société</h2>
     <select id="depense-nom"></select>
-     <select id="depense-frais">
+    <select id="depense-frais">
         <option value="⛽Frais d'essences">⛽Frais d'essences</option>
         <option value="🔧Frais de réparations">🔧Frais de réparations</option>
         <option value="🧰Frais de révisions">🧰Frais de révisions</option>
@@ -135,11 +135,11 @@
 <div id="toast" class="hidden">Données envoyées ✅</div>
 
 <script>
- const identifiants = [
-  { id: "ltd", mdp: "paleto" },
-  { id: "papy", mdp: "papy" },
-  { id: "noah", mdp: "1234" }
-];
+  const identifiants = [
+    { id: "ltd", mdp: "paleto" },
+    { id: "papy", mdp: "papy" },
+    { id: "noah", mdp: "1234" }
+  ];
 
   const noms = ["💼Anderson Copper", "💼Léa Médina", "📊Ethan Revers", "👔Noah Oliveira","👔Leeloo Rex", "👔Franky Melloni"];
 
@@ -188,13 +188,13 @@
     }
 
     const total = Number(quantite) * Number(montant);
-    const webhookUrl = "https://discord.com/api/webhooks/1367663277198282762/bziMpLENkDo4OmrAlwoVfIxUeoT8MPzi8Z48ti5h8KkhZVfWo2hskGnl2X-1mKzBRIYZ"; // ← remplace ici
+    const webhookUrl = "https://discord.com/api/webhooks/1367663277198282762/bziMpLENkDo4OmrAlwoVfIxUeoT8MPzi8Z48ti5h8KkhZVfWo2hskGnl2X-1mKzBRIYZ";
 
     const payload = {
       embeds: [{
-        title: type === "commande" ? "📦 Commande enregistrée" : "💳 Dépense justifiée",
+        title: type === "commande" ? "\ud83d\udce6 Commande enregistrée" : "\ud83d\udcb3 Dépense justifiée",
         color: type === "commande" ? 0xf39c12 : 0xe74c3c,
-        description: `**👤** ${nom} │ **🧾** ${frais} │ **✒️** ${quantite} │ **💵** ${montant}$ │ **💰 Total :** ${total}$`,
+        description: `**\ud83d\udc64** ${nom} │ **\ud83e\uddfe** ${frais} │ **\u270d\ufe0f** ${quantite} │ **\ud83d\udcb5** ${montant}$ │ **\ud83d\udcb0 Total :** ${total}$`,
         footer: {
           text: `Horodateur : ${new Date().toLocaleString("fr-FR")}`
         }
@@ -211,8 +211,7 @@
   }
 
   window.onload = () => {
-    const selects = ['depense-nom', 'commande-nom'];
-    selects.forEach(id => {
+    ['depense-nom', 'commande-nom'].forEach(id => {
       const select = document.getElementById(id);
       noms.forEach(n => {
         const opt = document.createElement('option');
