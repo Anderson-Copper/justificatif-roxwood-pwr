@@ -174,28 +174,31 @@
     }
 
     function envoyer(type) {
-      const nom = document.getElementById(`${type}-nom`).value;
-      const frais = document.getElementById(`${type}-frais`).value;
-      const qte = document.getElementById(`${type}-qte`).value;
-      const montant = document.getElementById(`${type}-montant`).value;
+  const nom = document.getElementById(`${type}-nom`).value;
+  const frais = document.getElementById(`${type}-frais`).value;
+  const qte = document.getElementById(`${type}-qte`).value;
+  const montant = document.getElementById(`${type}-montant`).value;
 
-        fetch("https://script.google.com/macros/s/AKfycbzIRj2UzbMKtsAoR4iGK7r6NiYPbBGVWgM_GN_hYCQYnK6E_sXuDKhzmkiqWGoaCHtAsg/exec", {
+  fetch("https://script.google.com/macros/s/TON_EXEC_URL/exec", {
     method: "POST",
     mode: "no-cors",
     headers: {
       "Content-Type": "application/json"
     },
-
-      if (!nom || !frais || !qte || !montant) {
-        alert("Veuillez remplir tous les champs !");
-        return;
-      }
-
-      google.script.run
-  .withSuccessHandler(() => showToast("✅ Données envoyées avec succès !"))
-  .withFailureHandler(e => showToast("❌ Erreur : " + e.message))
-  .soumettreDonnees(type, nom, frais, qte, montant);
-    }
+    body: JSON.stringify({
+      type: type,
+      nom: nom,
+      frais: frais,
+      quantite: qte,
+      montant: montant
+    })
+  }).then(() => {
+    showToast("✅ Données envoyées !");
+  }).catch((err) => {
+    showToast("❌ Erreur d'envoi !");
+    console.error(err);
+  });
+}
 
     window.onload = function () {
       google.script.run.withSuccessHandler(function (noms) {
