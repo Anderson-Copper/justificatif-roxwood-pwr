@@ -166,7 +166,7 @@
       const qte = document.getElementById(`${type}-qte`).value;
       const montant = document.getElementById(`${type}-montant`).value;
 
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getNoms", {
+      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -207,7 +207,7 @@
     }
 
     window.onload = () => {
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec")
+      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getNoms")
         .then(res => res.json())
         .then(noms => {
           ['depense-nom', 'commande-nom'].forEach(id => {
