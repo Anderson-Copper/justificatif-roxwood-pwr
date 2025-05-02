@@ -163,9 +163,9 @@
 
     function envoyer(type) {
       const nom = document.getElementById(`${type}-nom`).value;
-      const frais = document.getElementById(`${type}-frais`).value;
-      const qte = document.getElementById(`${type}-qte`).value;
-      const montant = document.getElementById(`${type}-montant`).value;
+      const frais = document.getElementById(`${type}-nom`).value;
+      const qte = document.getElementById(`${type}-nom`).value;
+      const montant = document.getElementById(`${type}-nom`).value;
 
       fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec", {
         method: "POST",
