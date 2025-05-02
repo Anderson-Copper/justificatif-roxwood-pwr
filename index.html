@@ -144,7 +144,7 @@
       const id = document.getElementById('login-id').value.trim();
       const mdp = document.getElementById('login-mdp').value.trim();
 
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getIdentifiants")
+      fetch("https://script.google.com/macros/s/AKfycbwOTaWREjDrpH0HaUA_dv4VNkPpt0RtLsE6dkYw9Zis5f-nsMid4jAmSySj4NcVmLJUZQ/exec")
         .then(res => res.json())
         .then(data => {
           const match = data.find(row => row.id === id && row.mdp === mdp);
@@ -166,7 +166,7 @@
       const qte = document.getElementById(`${type}-qte`).value;
       const montant = document.getElementById(`${type}-montant`).value;
 
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbwOTaWREjDrpH0HaUA_dv4VNkPpt0RtLsE6dkYw9Zis5f-nsMid4jAmSySj4NcVmLJUZQ/exec", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -207,7 +207,7 @@
     }
 
     window.onload = () => {
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getNoms")
+      fetch("https://script.google.com/macros/s/AKfycbwOTaWREjDrpH0HaUA_dv4VNkPpt0RtLsE6dkYw9Zis5f-nsMid4jAmSySj4NcVmLJUZQ/exec")
         .then(res => res.json())
         .then(noms => {
           ['depense-nom', 'commande-nom'].forEach(id => {
