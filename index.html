@@ -223,5 +223,26 @@
         });
     };
   </script>
+  <script>
+  function validateLogin() {
+    const id = document.getElementById('login-id').value.trim();
+    const mdp = document.getElementById('login-mdp').value.trim();
+
+    fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getIdentifiants")
+      .then(res => res.json())
+      .then(data => {
+        const match = data.find(row => row.id === id && row.mdp === mdp);
+        if (match) {
+          document.getElementById('accueil').classList.add('hidden');
+          document.getElementById('menu').classList.remove('hidden');
+        } else {
+          document.getElementById('login-error').innerText = 'Identifiants incorrects.';
+        }
+      })
+      .catch(() => {
+        document.getElementById('login-error').innerText = 'Erreur lors de la connexion.';
+      });
+  }
+</script>
 </body>
 </html>
