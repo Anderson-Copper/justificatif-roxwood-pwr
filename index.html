@@ -1,41 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
+  <meta charset="UTF-8">
+  <title>LTD Paleto</title>
   <style>
-
-    #toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #27ae60;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 25px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  font-size: 15px;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  z-index: 999;
-}
-#toast.show {
-  opacity: 1;
-}
-.hidden {
-  display: none;
-}
     body {
-  font-family: 'Segoe UI', sans-serif;
-  text-align: center;
-  padding: 30px;
-  background-image: url('https://res.cloudinary.com/dvilvozbw/image/upload/v1746155459/olivier_q5fpd4.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  min-height: 100vh;
-}
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 30px;
+      background-image: url('https://res.cloudinary.com/dvilvozbw/image/upload/v1746155459/olivier_q5fpd4.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
     .container {
       max-width: 500px;
       margin: auto;
@@ -69,11 +48,27 @@
     }
     .hidden { display: none; }
     .error { color: red; font-size: 14px; }
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #27ae60;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 25px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      font-size: 15px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      z-index: 999;
+    }
+    #toast.show { opacity: 1; }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="NA" id="logo">
+    <img src="logo.png" id="logo">
     <div id="accueil">
       <h1>Bienvenue LTD Paleto</h1>
       <input type="text" id="login-id" placeholder="Identifiant">
@@ -144,23 +139,52 @@
     </div>
   </div>
 
-  <script>
-    let credentials = {};
+  <div id="toast" class="hidden">Données envoyées ✅</div>
 
-    function onSuccess(user) {
-      document.getElementById('accueil').classList.add('hidden');
-      document.getElementById('menu').classList.remove('hidden');
-    }
+  <script>
+    let identifiants = [];
 
     function validateLogin() {
       const id = document.getElementById('login-id').value.trim();
       const mdp = document.getElementById('login-mdp').value.trim();
-      google.script.run.withSuccessHandler(function(data) {
-        credentials = data;
-        const match = credentials.find(row => row.id === id && row.mdp === mdp);
-        if (match) onSuccess(id);
-        else document.getElementById('login-error').innerText = "Identifiants incorrects.";
-      }).getIdentifiants();
+      fetch("https://script.google.com/macros/s/VOTRE_EXEC_URL/exec?action=getIdentifiants")
+        .then(res => res.json())
+        .then(data => {
+          identifiants = data;
+          const match = identifiants.find(row => row.id === id && row.mdp === mdp);
+          if (match) {
+            document.getElementById('accueil').classList.add('hidden');
+            document.getElementById('menu').classList.remove('hidden');
+          } else {
+            document.getElementById('login-error').innerText = 'Identifiants incorrects.';
+          }
+        });
+    }
+
+    function envoyer(type) {
+      const nom = document.getElementById(`${type}-nom`).value;
+      const frais = document.getElementById(`${type}-frais`).value;
+      const qte = document.getElementById(`${type}-qte`).value;
+      const montant = document.getElementById(`${type}-montant`).value;
+
+      fetch("https://script.google.com/macros/s/VOTRE_EXEC_URL/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          type: type,
+          nom: nom,
+          frais: frais,
+          quantite: qte,
+          montant: montant
+        })
+      }).then(() => {
+        showToast("✅ Données envoyées !");
+      }).catch(() => {
+        showToast("❌ Erreur d'envoi !");
+      });
     }
 
     function showPage(page) {
@@ -173,66 +197,31 @@
       document.getElementById('menu').classList.remove('hidden');
     }
 
-    function envoyer(type) {
-  const nom = document.getElementById(`${type}-nom`).value;
-  const frais = document.getElementById(`${type}-frais`).value;
-  const qte = document.getElementById(`${type}-qte`).value;
-  const montant = document.getElementById(`${type}-montant`).value;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.classList.add('hidden'), 300);
+      }, 2500);
+    }
 
-  fetch("https://script.google.com/macros/s/AKfycbzZLHnwHSA3SzHx8rK4Sqm-hJEDSXr0CFtTP5gidoy4/dev", {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      type: type,
-      nom: nom,
-      frais: frais,
-      quantite: qte,
-      montant: montant
-    })
-  }).then(() => {
-    showToast("✅ Données envoyées !");
-  }).catch((err) => {
-    showToast("❌ Erreur d'envoi !");
-    console.error(err);
-  });
-}
-
-    window.onload = function () {
-      google.script.run.withSuccessHandler(function (noms) {
-        const depenseSelect = document.getElementById('depense-nom');
-        const commandeSelect = document.getElementById('commande-nom');
-        if (!depenseSelect || !commandeSelect) {
-          alert('Erreur : champs <select> non trouvés.');
-          return;
-        }
-        noms.forEach(n => {
-          const opt1 = document.createElement('option');
-          const opt2 = document.createElement('option');
-          opt1.value = opt1.textContent = n;
-          opt2.value = opt2.textContent = n;
-          depenseSelect.appendChild(opt1);
-          commandeSelect.appendChild(opt2);
+    window.onload = () => {
+      fetch("https://script.google.com/macros/s/AKfycbzZLHnwHSA3SzHx8rK4Sqm-hJEDSXr0CFtTP5gidoy4/dev")
+        .then(res => res.json())
+        .then(noms => {
+          ['depense-nom', 'commande-nom'].forEach(id => {
+            const select = document.getElementById(id);
+            noms.forEach(n => {
+              const opt = document.createElement('option');
+              opt.value = opt.textContent = n;
+              select.appendChild(opt);
+            });
+          });
         });
-      }).getNomsJSON();
     };
   </script>
-  <script>
-  // ... window.onload ici
-
-  function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.remove('hidden');
-    toast.classList.add('show');
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => toast.classList.add('hidden'), 300);
-    }, 2500);
-  }
-</script>
-  <div id="toast" class="hidden">Données envoyées avec succès ✅</div>
 </body>
 </html>
