@@ -34,7 +34,6 @@
       color: white;
       cursor: pointer;
     }
-    button:hover { background-color: #34495e; }
     input, select {
       width: 100%;
       padding: 10px;
@@ -57,7 +56,6 @@
       color: white;
       padding: 12px 24px;
       border-radius: 25px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       font-size: 15px;
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
@@ -68,7 +66,7 @@
 </head>
 <body>
   <div class="container">
-    <img src="logo.png" id="logo">
+    <img src="logo.png" id="logo" alt="Logo LTD">
     <div id="accueil">
       <h1>Bienvenue LTD Paleto</h1>
       <input type="text" id="login-id" placeholder="Identifiant">
@@ -142,34 +140,34 @@
   <div id="toast" class="hidden">Données envoyées ✅</div>
 
   <script>
-    let identifiants = [];
-
     function validateLogin() {
       const id = document.getElementById('login-id').value.trim();
       const mdp = document.getElementById('login-mdp').value.trim();
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec")
+
+      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getIdentifiants")
         .then(res => res.json())
         .then(data => {
-          identifiants = data;
-          const match = identifiants.find(row => row.id === id && row.mdp === mdp);
+          const match = data.find(row => row.id === id && row.mdp === mdp);
           if (match) {
             document.getElementById('accueil').classList.add('hidden');
             document.getElementById('menu').classList.remove('hidden');
           } else {
             document.getElementById('login-error').innerText = 'Identifiants incorrects.';
           }
+        })
+        .catch(() => {
+          document.getElementById('login-error').innerText = 'Erreur de connexion.';
         });
     }
 
     function envoyer(type) {
       const nom = document.getElementById(`${type}-nom`).value;
-      const frais = document.getElementById(`${type}-nom`).value;
-      const qte = document.getElementById(`${type}-nom`).value;
-      const montant = document.getElementById(`${type}-nom`).value;
+      const frais = document.getElementById(`${type}-frais`).value;
+      const qte = document.getElementById(`${type}-qte`).value;
+      const montant = document.getElementById(`${type}-montant`).value;
 
       fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec", {
         method: "POST",
-        mode: "no-cors",
         headers: {
           "Content-Type": "application/json"
         },
@@ -209,7 +207,7 @@
     }
 
     window.onload = () => {
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getNoms")
         .then(res => res.json())
         .then(noms => {
           ['depense-nom', 'commande-nom'].forEach(id => {
@@ -223,26 +221,5 @@
         });
     };
   </script>
-  <script>
-  function validateLogin() {
-    const id = document.getElementById('login-id').value.trim();
-    const mdp = document.getElementById('login-mdp').value.trim();
-
-    fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getIdentifiants")
-      .then(res => res.json())
-      .then(data => {
-        const match = data.find(row => row.id === id && row.mdp === mdp);
-        if (match) {
-          document.getElementById('accueil').classList.add('hidden');
-          document.getElementById('menu').classList.remove('hidden');
-        } else {
-          document.getElementById('login-error').innerText = 'Identifiants incorrects.';
-        }
-      })
-      .catch(() => {
-        document.getElementById('login-error').innerText = 'Erreur lors de la connexion.';
-      });
-  }
-</script>
 </body>
 </html>
