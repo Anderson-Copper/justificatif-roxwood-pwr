@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>LTD Paleto</title>
+  <title>LTD Paleto - Interface GitHub</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -22,7 +22,6 @@
       padding: 20px;
       border-radius: 20px;
     }
-    h1, h2 { margin-bottom: 20px; }
     button {
       width: 100%;
       padding: 12px;
@@ -34,16 +33,13 @@
       color: white;
       cursor: pointer;
     }
+    button:hover { background-color: #34495e; }
     input, select {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
       border-radius: 10px;
       border: 1px solid #ccc;
-    }
-    #logo {
-      max-width: 150px;
-      margin-bottom: 20px;
     }
     .hidden { display: none; }
     .error { color: red; font-size: 14px; }
@@ -65,26 +61,25 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="logo.png" id="logo" alt="Logo LTD">
-    <div id="accueil">
-      <h1>Bienvenue LTD Paleto</h1>
-      <input type="text" id="login-id" placeholder="Identifiant">
-      <input type="password" id="login-mdp" placeholder="Mot de passe">
-      <div id="login-error" class="error"></div>
-      <button onclick="validateLogin()">Connexion</button>
-    </div>
+<div class="container">
+  <h1>Bienvenue LTD Paleto</h1>
+  <div id="accueil">
+    <input type="text" id="login-id" placeholder="Identifiant">
+    <input type="password" id="login-mdp" placeholder="Mot de passe">
+    <div id="login-error" class="error"></div>
+    <button onclick="validateLogin()">Connexion</button>
+  </div>
 
-    <div id="menu" class="hidden">
-      <h2>Que souhaitez-vous faire ?</h2>
-      <button onclick="showPage('depense-form')">Justifier des dépenses</button>
-      <button onclick="showPage('commande-form')">Déclarer une commande</button>
-    </div>
+  <div id="menu" class="hidden">
+    <h2>Que souhaitez-vous faire ?</h2>
+    <button onclick="showPage('depense-form')">Justifier des dépenses</button>
+    <button onclick="showPage('commande-form')">Déclarer une commande</button>
+  </div>
 
-    <div id="depense-form" class="hidden">
-      <h2>Frais de société</h2>
-      <select id="depense-nom"></select>
-      <select id="depense-frais">
+  <div id="depense-form" class="hidden">
+    <h2>Frais de société</h2>
+    <select id="depense-nom"></select>
+     <select id="depense-frais">
         <option value="⛽Frais d'essences">⛽Frais d'essences</option>
         <option value="🔧Frais de réparations">🔧Frais de réparations</option>
         <option value="🧰Frais de révisions">🧰Frais de révisions</option>
@@ -101,16 +96,16 @@
         <option value="📋Frais supplémentaires">📋Frais supplémentaires</option>
         <option value="💻Commandes partenaires">💻Commandes partenaires</option>
       </select>
-      <input type="number" id="depense-qte" placeholder="Quantité">
-      <input type="number" id="depense-montant" placeholder="Montant $">
-      <button onclick="envoyer('depense')">Valider</button>
-      <button onclick="retourAccueil()">Retour</button>
-    </div>
+    <input type="number" id="depense-qte" placeholder="Quantité">
+    <input type="number" id="depense-montant" placeholder="Montant $">
+    <button onclick="envoyer('depense')">Valider</button>
+    <button onclick="retourAccueil()">Retour</button>
+  </div>
 
-    <div id="commande-form" class="hidden">
-      <h2>Déclaration de commande</h2>
-      <select id="commande-nom"></select>
-      <select id="commande-frais">
+  <div id="commande-form" class="hidden">
+    <h2>Déclaration de commande</h2>
+    <select id="commande-nom"></select>
+    <select id="commande-frais">
         <option value="🥦Commande Bidons vides">🥦Commande Bidons vides</option>
         <option value="⛏️Commande Charbons">⛏️Commande Charbons</option>
         <option value="⛏️Commande Cuivres">⛏️Commande Cuivres</option>
@@ -130,96 +125,102 @@
         <option value="📩Commande Diverses">📩Commande Diverses</option>
         <option value="📦Matières premières">📦Matières premières</option>
       </select>
-      <input type="number" id="commande-qte" placeholder="Quantité">
-      <input type="number" id="commande-montant" placeholder="Montant $">
-      <button onclick="envoyer('commande')">Valider</button>
-      <button onclick="retourAccueil()">Retour</button>
-    </div>
+    <input type="number" id="commande-qte" placeholder="Quantité">
+    <input type="number" id="commande-montant" placeholder="Montant $">
+    <button onclick="envoyer('commande')">Valider</button>
+    <button onclick="retourAccueil()">Retour</button>
   </div>
+</div>
 
-  <div id="toast" class="hidden">Données envoyées ✅</div>
+<div id="toast" class="hidden">Données envoyées ✅</div>
 
-  <script>
-    function validateLogin() {
-      const id = document.getElementById('login-id').value.trim();
-      const mdp = document.getElementById('login-mdp').value.trim();
+<script>
+  const identifiants = [
+    {{ id: "ltd", mdp: "paleto" }},
+    {{ id: "papy", mdp: "papy" }}
+    {{ id: "noah", mdp: "1234" }}
+  ];
 
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getIdentifiants")
-        .then(res => res.json())
-        .then(data => {
-          const match = data.find(row => row.id === id && row.mdp === mdp);
-          if (match) {
-            document.getElementById('accueil').classList.add('hidden');
-            document.getElementById('menu').classList.remove('hidden');
-          } else {
-            document.getElementById('login-error').innerText = 'Identifiants incorrects.';
-          }
-        })
-        .catch(() => {
-          document.getElementById('login-error').innerText = 'Erreur de connexion.';
-        });
-    }
+  const noms = ["💼Anderson Copper", "💼Léa Médina", "📊Ethan Revers", "👔Noah Oliveira","👔Leeloo Rex", "👔Franky Melloni"];
 
-    function envoyer(type) {
-      const nom = document.getElementById(`${type}-nom`).value;
-      const frais = document.getElementById(`${type}-frais`).value;
-      const qte = document.getElementById(`${type}-qte`).value;
-      const montant = document.getElementById(`${type}-montant`).value;
-
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          type: type,
-          nom: nom,
-          frais: frais,
-          quantite: qte,
-          montant: montant
-        })
-      }).then(() => {
-        showToast("✅ Données envoyées !");
-      }).catch(() => {
-        showToast("❌ Erreur d'envoi !");
-      });
-    }
-
-    function showPage(page) {
-      ['menu', 'depense-form', 'commande-form'].forEach(id => document.getElementById(id).classList.add('hidden'));
-      document.getElementById(page).classList.remove('hidden');
-    }
-
-    function retourAccueil() {
-      ['menu', 'depense-form', 'commande-form'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  function validateLogin() {
+    const id = document.getElementById('login-id').value.trim();
+    const mdp = document.getElementById('login-mdp').value.trim();
+    const found = identifiants.find(x => x.id === id && x.mdp === mdp);
+    if (found) {
+      document.getElementById('accueil').classList.add('hidden');
       document.getElementById('menu').classList.remove('hidden');
+    } else {
+      document.getElementById('login-error').innerText = "Identifiants incorrects.";
+    }
+  }
+
+  function showPage(page) {
+    ['menu', 'depense-form', 'commande-form'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    document.getElementById(page).classList.remove('hidden');
+  }
+
+  function retourAccueil() {
+    ['menu', 'depense-form', 'commande-form'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    document.getElementById('menu').classList.remove('hidden');
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.classList.add('hidden'), 300);
+    }, 2500);
+  }
+
+  function envoyer(type) {
+    const nom = document.getElementById(`${type}-nom`).value;
+    const frais = document.getElementById(`${type}-frais`).value;
+    const quantite = document.getElementById(`${type}-qte`).value;
+    const montant = document.getElementById(`${type}-montant`).value;
+
+    if (!nom || !frais || !quantite || !montant) {
+      alert("Remplissez tous les champs !");
+      return;
     }
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.remove('hidden');
-      toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.classList.add('hidden'), 300);
-      }, 2500);
-    }
+    const total = Number(quantite) * Number(montant);
+    const webhookUrl = "https://discord.com/api/webhooks/1367663277198282762/bziMpLENkDo4OmrAlwoVfIxUeoT8MPzi8Z48ti5h8KkhZVfWo2hskGnl2X-1mKzBRIYZ"; // ← remplace ici
 
-    window.onload = () => {
-      fetch("https://script.google.com/macros/s/AKfycbwIagl7aAWvycQ_xcCjvNFR16K5N_xAFIncAqsgnbSQb8mB9j2wjRBmhZN4Jy18vxuOoQ/exec?action=getNoms")
-        .then(res => res.json())
-        .then(noms => {
-          ['depense-nom', 'commande-nom'].forEach(id => {
-            const select = document.getElementById(id);
-            noms.forEach(n => {
-              const opt = document.createElement('option');
-              opt.value = opt.textContent = n;
-              select.appendChild(opt);
-            });
-          });
-        });
+    const payload = {
+      embeds: [{
+        title: type === "commande" ? "📦 Commande enregistrée" : "💳 Dépense justifiée",
+        color: type === "commande" ? 0xf39c12 : 0xe74c3c,
+        description: `**👤** ${nom} │ **🧾** ${frais} │ **✒️** ${quantite} │ **💵** ${montant}$ │ **💰 Total :** ${total}$`,
+        footer: {
+          text: `Horodateur : ${new Date().toLocaleString("fr-FR")}`
+        }
+      }]
     };
-  </script>
+
+    fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => showToast("✅ Données envoyées"))
+    .catch(() => showToast("❌ Erreur Discord"));
+  }
+
+  window.onload = () => {
+    const selects = ['depense-nom', 'commande-nom'];
+    selects.forEach(id => {
+      const select = document.getElementById(id);
+      noms.forEach(n => {
+        const opt = document.createElement('option');
+        opt.value = opt.textContent = n;
+        select.appendChild(opt);
+      });
+    });
+  };
+</script>
 </body>
 </html>
