@@ -1,39 +1,235 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>LTD Paleto</title>
+  <base target="_top">
   <style>
+
+    #toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #27ae60;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 25px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-size: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 999;
+}
+#toast.show {
+  opacity: 1;
+}
+.hidden {
+  display: none;
+}
     body {
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 30px;
-      background-image: url('background.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      min-height: 100vh;
-      color: #2c3e50;
-    }
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  padding: 30px;
+  background-image: url('https://res.cloudinary.com/dvilvozbw/image/upload/v1746155459/olivier_q5fpd4.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
     .container {
-      max-width: 600px;
+      max-width: 500px;
       margin: auto;
       background: rgba(255,255,255,0.9);
-      padding: 30px;
+      padding: 20px;
       border-radius: 20px;
     }
-    img {
+    h1, h2 { margin-bottom: 20px; }
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 12px;
+      border: none;
+      background-color: #2c3e50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover { background-color: #34495e; }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    #logo {
       max-width: 150px;
       margin-bottom: 20px;
     }
+    .hidden { display: none; }
+    .error { color: red; font-size: 14px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="logo.png" alt="Logo LTD">
-    <h1>Bienvenue sur LTD Paleto</h1>
-    <p>Cette interface est optimisée pour les tablettes dans FiveM.</p>
+    <img src="NA" id="logo">
+    <div id="accueil">
+      <h1>Bienvenue LTD Paleto</h1>
+      <input type="text" id="login-id" placeholder="Identifiant">
+      <input type="password" id="login-mdp" placeholder="Mot de passe">
+      <div id="login-error" class="error"></div>
+      <button onclick="validateLogin()">Connexion</button>
+    </div>
+
+    <div id="menu" class="hidden">
+      <h2>Que souhaitez-vous faire ?</h2>
+      <button onclick="showPage('depense-form')">Justifier des dépenses</button>
+      <button onclick="showPage('commande-form')">Déclarer une commande</button>
+    </div>
+
+    <div id="depense-form" class="hidden">
+      <h2>Frais de société</h2>
+      <select id="depense-nom"></select>
+      <select id="depense-frais">
+        <option value="⛽Frais d'essences">⛽Frais d'essences</option>
+        <option value="🔧Frais de réparations">🔧Frais de réparations</option>
+        <option value="🧰Frais de révisions">🧰Frais de révisions</option>
+        <option value="📦Matériels / Fournitures YouTools">📦Matériels / Fournitures YouTools</option>
+        <option value="🛒Commandes comptoir épicerie">🛒Commandes comptoir épicerie</option>
+        <option value="👔Frais de textiles & accessoires">👔Frais de textiles & accessoires</option>
+        <option value="🦐Commandes de Menu">🦐Commandes de Menu</option>
+        <option value="🥦Commandes LD Organic">🥦Commandes LD Organic</option>
+        <option value="⛏️Davis Quartz">⛏️Davis Quartz</option>
+        <option value="🔩Commandes GB Foundry">🔩Commandes GB Foundry</option>
+        <option value="🛢️Roxwood PWR">🛢️Roxwood PWR</option>
+        <option value="🌾Commandes Biogood">🌾Commandes Biogood</option>
+        <option value="🌽Commandes Grapeseed">🌽Commandes Grapeseed</option>
+        <option value="📋Frais supplémentaires">📋Frais supplémentaires</option>
+        <option value="💻Commandes partenaires">💻Commandes partenaires</option>
+      </select>
+      <input type="number" id="depense-qte" placeholder="Quantité">
+      <input type="number" id="depense-montant" placeholder="Montant $">
+      <button onclick="envoyer('depense')">Valider</button>
+      <button onclick="retourAccueil()">Retour</button>
+    </div>
+
+    <div id="commande-form" class="hidden">
+      <h2>Déclaration de commande</h2>
+      <select id="commande-nom"></select>
+      <select id="commande-frais">
+        <option value="🥦Commande Bidons vides">🥦Commande Bidons vides</option>
+        <option value="⛏️Commande Charbons">⛏️Commande Charbons</option>
+        <option value="⛏️Commande Cuivres">⛏️Commande Cuivres</option>
+        <option value="🔩Commande Acier">🔩Commande Acier</option>
+        <option value="🔩Commande Lingot de Cuivres">🔩Commande Lingot de Cuivres</option>
+        <option value="🥦Commande Sacs en papier">🥦Commande Sacs en papier</option>
+        <option value="🥦Commande Sachets vides">🥦Commande Sachets vides</option>
+        <option value="🦖Commande Menu Rex Dinner">🦖Commande Menu Rex Dinner</option>
+        <option value="🐟Commande Menu Pearls">🐟Commande Menu Pearls</option>
+        <option value="🍸Commande Menu Hen House">🍸Commande Menu Hen House</option>
+        <option value="🛢️Commande Bidons d'essences">🛢️Commande Bidons d'essences</option>
+        <option value="🌾Commandes Biogood">🌾Commandes Biogood</option>
+        <option value="🌽Commandes Grapeseed">🌽Commandes Grapeseed</option>
+        <option value="🍶Commandes Bouteille O²">🍶Commandes Bouteille O²</option>
+        <option value="💻Commande Comptabilité">💻Commande Comptabilité</option>
+        <option value="📸Commande Weazel News">📸Commande Weazel News</option>
+        <option value="📩Commande Diverses">📩Commande Diverses</option>
+        <option value="📦Matières premières">📦Matières premières</option>
+      </select>
+      <input type="number" id="commande-qte" placeholder="Quantité">
+      <input type="number" id="commande-montant" placeholder="Montant $">
+      <button onclick="envoyer('commande')">Valider</button>
+      <button onclick="retourAccueil()">Retour</button>
+    </div>
   </div>
+
+  <script>
+    let credentials = {};
+
+    function onSuccess(user) {
+      document.getElementById('accueil').classList.add('hidden');
+      document.getElementById('menu').classList.remove('hidden');
+    }
+
+    function validateLogin() {
+      const id = document.getElementById('login-id').value.trim();
+      const mdp = document.getElementById('login-mdp').value.trim();
+      google.script.run.withSuccessHandler(function(data) {
+        credentials = data;
+        const match = credentials.find(row => row.id === id && row.mdp === mdp);
+        if (match) onSuccess(id);
+        else document.getElementById('login-error').innerText = "Identifiants incorrects.";
+      }).getIdentifiants();
+    }
+
+    function showPage(page) {
+      ['menu', 'depense-form', 'commande-form'].forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById(page).classList.remove('hidden');
+    }
+
+    function retourAccueil() {
+      ['menu', 'depense-form', 'commande-form'].forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById('menu').classList.remove('hidden');
+    }
+
+    function envoyer(type) {
+      const nom = document.getElementById(`${type}-nom`).value;
+      const frais = document.getElementById(`${type}-frais`).value;
+      const qte = document.getElementById(`${type}-qte`).value;
+      const montant = document.getElementById(`${type}-montant`).value;
+
+        fetch("https://script.google.com/macros/s/AKfycbzIRj2UzbMKtsAoR4iGK7r6NiYPbBGVWgM_GN_hYCQYnK6E_sXuDKhzmkiqWGoaCHtAsg/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+      if (!nom || !frais || !qte || !montant) {
+        alert("Veuillez remplir tous les champs !");
+        return;
+      }
+
+      google.script.run
+  .withSuccessHandler(() => showToast("✅ Données envoyées avec succès !"))
+  .withFailureHandler(e => showToast("❌ Erreur : " + e.message))
+  .soumettreDonnees(type, nom, frais, qte, montant);
+    }
+
+    window.onload = function () {
+      google.script.run.withSuccessHandler(function (noms) {
+        const depenseSelect = document.getElementById('depense-nom');
+        const commandeSelect = document.getElementById('commande-nom');
+        if (!depenseSelect || !commandeSelect) {
+          alert('Erreur : champs <select> non trouvés.');
+          return;
+        }
+        noms.forEach(n => {
+          const opt1 = document.createElement('option');
+          const opt2 = document.createElement('option');
+          opt1.value = opt1.textContent = n;
+          opt2.value = opt2.textContent = n;
+          depenseSelect.appendChild(opt1);
+          commandeSelect.appendChild(opt2);
+        });
+      }).getNomsJSON();
+    };
+  </script>
+  <script>
+  // ... window.onload ici
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.classList.add('hidden'), 300);
+    }, 2500);
+  }
+</script>
+  <div id="toast" class="hidden">Données envoyées avec succès ✅</div>
 </body>
 </html>
