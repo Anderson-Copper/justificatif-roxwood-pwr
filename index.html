@@ -211,6 +211,12 @@
     .catch(() => showToast("❌ Erreur Discord"));
   }
 
+  function logout() {
+    localStorage.removeItem("ltd_session");
+    document.getElementById('menu').classList.add('hidden');
+    document.getElementById('accueil').classList.remove('hidden');
+  }
+
   window.onload = () => {
     // Garde session active pendant 10 minutes
     const lastSession = localStorage.getItem("ltd_session");
@@ -228,12 +234,6 @@
       });
     });
   };
-  
-  function logout() {
-  localStorage.removeItem("ltd_session");
-  document.getElementById('menu').classList.add('hidden');
-  document.getElementById('accueil').classList.remove('hidden');
-}
 </script>
 </body>
 </html>
