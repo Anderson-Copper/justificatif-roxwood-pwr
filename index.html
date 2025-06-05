@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>LTD Paleto</title>
+  <title>Roxwood PWR</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -62,7 +62,7 @@
 </head>
 <body>
 <div class="container">
-  <h1>Bienvenue LTD Paleto</h1>
+  <h1>Bienvenue Roxwood Power</h1>
   <div id="accueil">
     <input type="text" id="login-id" placeholder="Identifiant">
     <input type="password" id="login-mdp" placeholder="Mot de passe">
@@ -84,18 +84,11 @@
         <option value="⛽Frais d'essences">⛽Frais d'essences</option>
         <option value="🔧Frais de réparations">🔧Frais de réparations</option>
         <option value="🧰Frais de révisions">🧰Frais de révisions</option>
-        <option value="📦Matériels / Fournitures YouTools">📦Matériels / Fournitures YouTools</option>
-        <option value="🛒Commandes comptoir épicerie">🛒Commandes comptoir épicerie</option>
         <option value="👔Frais de textiles & accessoires">👔Frais de textiles & accessoires</option>
         <option value="🦐Commandes de Menu">🦐Commandes de Menu</option>
         <option value="🥦Commandes LD Organic">🥦Commandes LD Organic</option>
-        <option value="⛏️Davis Quartz">⛏️Davis Quartz</option>
-        <option value="🔩Commandes GB Foundry">🔩Commandes GB Foundry</option>
         <option value="🛢️Roxwood PWR">🛢️Roxwood PWR</option>
-        <option value="🌾Commandes Biogood">🌾Commandes Biogood</option>
-        <option value="🌽Commandes Grapeseed">🌽Commandes Grapeseed</option>
         <option value="📋Frais supplémentaires">📋Frais supplémentaires</option>
-        <option value="💻Commandes partenaires">💻Commandes partenaires</option>
       </select>
     <input type="number" id="depense-qte" placeholder="Quantité">
     <input type="number" id="depense-montant" placeholder="Montant $">
@@ -107,20 +100,11 @@
     <h2>Déclaration de commande</h2>
     <select id="commande-nom"></select>
     <select id="commande-frais">
-        <option value="🥦Commande Bidons vides">🥦Commande Bidons vides</option>
-        <option value="⛏️Commande Charbons">⛏️Commande Charbons</option>
-        <option value="⛏️Commande Cuivres">⛏️Commande Cuivres</option>
-        <option value="🔩Commande Acier">🔩Commande Acier</option>
-        <option value="🔩Commande Lingot de Cuivres">🔩Commande Lingot de Cuivres</option>
-        <option value="🥦Commande Sacs en papier">🥦Commande Sacs en papier</option>
-        <option value="🥦Commande Sachets vides">🥦Commande Sachets vides</option>
+        <option value="🛢️Commande Bidons vides">🛢️Commande Bidons vides</option>
         <option value="🦖Commande Menu Rex Dinner">🦖Commande Menu Rex Dinner</option>
         <option value="🐟Commande Menu Pearls">🐟Commande Menu Pearls</option>
+        <option value="🥩Commande Delight">🥩Commande Menu Pearls</option>
         <option value="🍸Commande Menu Hen House">🍸Commande Menu Hen House</option>
-        <option value="🛢️Commande Bidons d'essences">🛢️Commande Bidons d'essences</option>
-        <option value="🌾Commandes Biogood">🌾Commandes Biogood</option>
-        <option value="🌽Commandes Grapeseed">🌽Commandes Grapeseed</option>
-        <option value="🍶Commandes Bouteille O²">🍶Commandes Bouteille O²</option>
         <option value="💻Commande Comptabilité">💻Commande Comptabilité</option>
         <option value="📸Commande Weazel News">📸Commande Weazel News</option>
         <option value="📩Commande Diverses">📩Commande Diverses</option>
@@ -136,12 +120,12 @@
 
 <script>
   const identifiants = [
-    { id: "ltd", mdp: "paleto" },
+    { id: "roxwood", mdp: "pwr" },
     { id: "papy", mdp: "papy" },
-    { id: "noah", mdp: "1234" }
+    { id: "admin", mdp: "1234" }
   ];
 
-  const noms = ["💼Léa Médina", "💼Ethan Revers", "📊Noah Oliveira", "👔Ethan Médina", "👔Leeloo Rex", "👔Franky Melloni", "💻Anderson Copper"];
+  const noms = ["💼Anderson Copper", "💼Charles Sinclair", "📊Alice Montgomery", "👔Logan Cooper", "👔Leeloo Rex", "👔Evan Cooper", "💻Anderson Copper"];
 
   function validateLogin() {
     const id = document.getElementById('login-id').value.trim();
@@ -188,7 +172,7 @@
     }
 
     const total = Number(quantite) * Number(montant);
-    const webhookUrl = "https://discord.com/api/webhooks/1367663277198282762/bziMpLENkDo4OmrAlwoVfIxUeoT8MPzi8Z48ti5h8KkhZVfWo2hskGnl2X-1mKzBRIYZ";
+    const webhookUrl = "https://discord.com/api/webhooks/1378750765266501642/hdIgSZiuKUOfeO9uMDDzxVsSRvQf2zrfiZ6IRRNemv6gQ6SPwTgZt7tP4L_-lJIAaQhl";
 
     const payload = {
       embeds: [{
