@@ -1,0 +1,17 @@
+{
+  "name": "intendant-roxwood-pwr",
+  "version": "1.0.0",
+  "description": "Déploiement automatique des commandes slash pour le bot Intendant de Roxwood PWR",
+  "main": "deploy-command.js",
+  "scripts": {
+    "start": "node deploy-command.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
