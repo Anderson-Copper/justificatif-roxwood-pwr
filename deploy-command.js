@@ -15,14 +15,14 @@ for (const file of commandFiles) {
   }
 }
 
-const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN_PWR);
+const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN_IPWR);
 
 (async () => {
   try {
     console.log(`Déploiement de ${commands.length} commande(s) en cours...`);
 
     await rest.put(
-      Routes.applicationGuildCommands(process.env.CLIENT_ID_PWR, process.env.GUILD_ID_PWR),
+      Routes.applicationGuildCommands(process.env.CLIENT_ID_IPWR, process.env.GUILD_ID_IPWR),
       { body: commands }
     );
 
@@ -31,4 +31,3 @@ const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN_PWR)
     console.error('Une erreur est survenue lors du déploiement :', error);
   }
 })();
-
