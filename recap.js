@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { DateTime } = require('luxon');
 
 const RECAP_DEPOT_CHANNEL_ID = '1380324663158378627';
-const RECAP_PROD_CHANNEL_ID = '1380327229212459028';
+const RECAP_PROD_CHANNEL_ID = '1376982976176324648';
 
 function getWeekDateRange(weekCode) {
   const match = weekCode.match(/^S(\d{1,2})$/i);
