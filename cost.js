@@ -23,8 +23,8 @@ async function collectCosts(channel, start, end) {
     if (msgDate < start || msgDate > end) continue;
 
     const content = msg.content;
-    const nameMatch = content.match(/^(.*?) *:/);
-    const costMatch = content.match(/Frais *: *\$?(\d+)/i);
+    const nameMatch = content.match(/Nom Prénom *: *(.+)/i);
+    const costMatch = content.match(/Prix final *: *\$?(\d+)/i);
     if (!nameMatch || !costMatch) continue;
 
     const name = nameMatch[1].trim();
@@ -75,4 +75,3 @@ module.exports = {
     await interaction.reply({ embeds: [embed] });
   }
 };
-
