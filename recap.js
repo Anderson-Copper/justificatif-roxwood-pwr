@@ -28,7 +28,11 @@ async function collectRecap(channel, start, end) {
     const date = DateTime.fromJSDate(msg.createdAt).setZone('Europe/Paris');
     if (date < start || date > end) continue;
 
-    let nom = msg.member?.displayName || msg.author?.username || 'Inconnu';
+    let nom = msg.author?.username || 'Inconnu';
+    if (embed.author?.name) nom = embed.author.name;
+    const nomMatch = nom.match(/([A-Z][a-z]+ [A-Z][a-z]+)/);
+    if (nomMatch) nom = nomMatch[1];
+
     let quantite = null, salaire = null;
     for (const field of fields) {
       if (field.name.toLowerCase().includes('quantité')) quantite = parseInt(field.value);
@@ -71,30 +75,25 @@ module.exports = {
     const channel = await interaction.client.channels.fetch(channelId);
     if (!channel) return interaction.reply({ content: 'Salon introuvable.', flags: 64 });
 
-    const data = await collectRecap(channel, dates.start, dates.end);
-    if (Object.keys(data).length === 0) {
+    const recapData = await collectRecap(channel, dates.start, dates.end);
+    if (Object.keys(recapData).length === 0) {
       return interaction.reply({ content: `Aucune donnée trouvée pour la semaine ${semaine}.`, flags: 64 });
     }
 
-    const chunk = Object.entries(data);
-    const embeds = [];
-    for (let i = 0; i < chunk.length; i += 25) {
-      const embed = new EmbedBuilder()
-        .setTitle(`Récapitulatif ${type === 'depot' ? 'Livraisons' : 'Production'} - Semaine ${semaine}`)
-        .setColor(type === 'depot' ? 0x3498db : 0xf39c12)
-        .setTimestamp(new Date());
+    const embed = new EmbedBuilder()
+      .setTitle(`Récapitulatif ${type === 'depot' ? 'Livraisons' : 'Production'} - Semaine ${semaine}`)
+      .setColor(type === 'depot' ? 0x3498db : 0xf39c12)
+      .setTimestamp(new Date());
 
-      for (const [nom, { quantite, salaire }] of chunk.slice(i, i + 25)) {
-        embed.addFields({
-          name: nom,
-          value: `Quantité : **${quantite}**\nSalaire : **$${salaire}**`,
-          inline: false
-        });
-      }
-
-      embeds.push(embed);
+    for (const [nom, { quantite, salaire }] of Object.entries(recapData)) {
+      embed.addFields({
+        name: nom,
+        value: `Quantité : **${quantite}**\nSalaire : **$${salaire}**`,
+        inline: false
+      });
     }
 
-    await interaction.reply({ embeds });
+    await interaction.reply({ embeds: [embed] });
   }
 };
+
