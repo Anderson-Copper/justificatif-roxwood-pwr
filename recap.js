@@ -85,15 +85,24 @@ module.exports = {
       .setColor(type === 'depot' ? 0x3498db : 0xf39c12)
       .setTimestamp(new Date());
 
-    for (const [nom, { quantite, salaire }] of Object.entries(recapData)) {
-      embed.addFields({
-        name: nom,
-        value: `Quantité : **${quantite}**\nSalaire : **$${salaire}**`,
-        inline: false
-      });
+    const fields = Object.entries(recapData).map(([nom, { quantite, salaire }]) => ({
+      name: nom,
+      value: `Quantité : **${quantite}**\nSalaire : **$${salaire}**`
+    }));
+
+    // Découpe en groupes de 25 pour respecter la limite Discord
+    const chunks = [];
+    for (let i = 0; i < fields.length; i += 25) {
+      chunks.push(fields.slice(i, i + 25));
     }
 
-    await interaction.reply({ embeds: [embed] });
+    for (const group of chunks) {
+      const tempEmbed = new EmbedBuilder(embed.data);
+      tempEmbed.addFields(group);
+      await interaction.channel.send({ embeds: [tempEmbed] });
+    }
+
+    await interaction.reply({ content: `Récapitulatif ${type} envoyé pour la semaine ${semaine}.`, flags: 64 });
   }
 };
 
