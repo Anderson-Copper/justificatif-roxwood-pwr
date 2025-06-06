@@ -47,8 +47,9 @@ client.on('interactionCreate', async interaction => {
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
-    await interaction.reply({ content: '❌ Une erreur est survenue.', ephemeral: true });
+    await interaction.reply({ content: '❌ Une erreur est survenue.', flags: 64 });
   }
 });
 
 client.login(process.env.DISCORD_TOKEN_IPWR);
+
