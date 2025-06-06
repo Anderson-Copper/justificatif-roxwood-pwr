@@ -28,8 +28,16 @@ async function collectRecap(channel, start, end) {
     const msgDate = DateTime.fromISO(embed.timestamp);
     if (msgDate < start || msgDate > end) continue;
 
-    const nameLine = embed.author?.name || embed.title || '';
-    const nameMatch = nameLine.match(/([A-Z][a-z]+ [A-Z][a-z]+)/);
+    let nameLine = embed.author?.name || embed.title || '';
+    let nameMatch = nameLine.match(/([A-Z][a-z]+(?: [A-Z][a-z]+)+)/);
+
+    // fallback : essayer de lire le nom dans le 1er champ texte s’il n’est pas dans le titre
+    if (!nameMatch && embed.fields.length >= 1) {
+      const possibleName = embed.fields[0].value?.trim();
+      const altMatch = possibleName?.match(/([A-Z][a-z]+(?: [A-Z][a-z]+)+)/);
+      if (altMatch) nameMatch = altMatch;
+    }
+
     if (!nameMatch) continue;
     const name = nameMatch[1];
 
@@ -97,3 +105,4 @@ module.exports = {
     await interaction.reply({ embeds: [embed] });
   }
 };
+
