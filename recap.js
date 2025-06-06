@@ -1,6 +1,5 @@
 // recap.js
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-
 const { DateTime } = require('luxon');
 
 const RECAP_DEPOT_CHANNEL_ID = '1380324663158378627';
@@ -11,7 +10,7 @@ function getWeekDateRange(weekCode) {
   if (!match) return null;
   const weekNumber = parseInt(match[1], 10);
   const year = 2025;
-  const start = DateTime.fromObject({ weekYear: year, weekNumber, weekday: 1, zone: 'Europe/Paris' }).startOf('day');
+  const start = DateTime.fromObject({ weekYear: year, weekNumber, weekday: 1 }).setZone('Europe/Paris').startOf('day');
   const end = start.plus({ days: 6 }).endOf('day');
   return { start, end };
 }
@@ -69,16 +68,16 @@ module.exports = {
     const type = interaction.options.getString('type');
     const semaine = interaction.options.getString('semaine');
     const dates = getWeekDateRange(semaine);
-    if (!dates) return interaction.reply({ content: 'Code semaine invalide.', ephemeral: true });
+    if (!dates) return interaction.reply({ content: 'Code semaine invalide.', flags: 64 });
 
     const channelId = type === 'depot' ? RECAP_DEPOT_CHANNEL_ID : RECAP_PROD_CHANNEL_ID;
     const channel = await interaction.client.channels.fetch(channelId);
-    if (!channel) return interaction.reply({ content: 'Salon introuvable.', ephemeral: true });
+    if (!channel) return interaction.reply({ content: 'Salon introuvable.', flags: 64 });
 
     const recapData = await collectRecap(channel, dates.start, dates.end);
 
     if (Object.keys(recapData).length === 0) {
-      return interaction.reply({ content: `Aucune donnée trouvée pour la semaine ${semaine}.`, ephemeral: true });
+      return interaction.reply({ content: `Aucune donnée trouvée pour la semaine ${semaine}.`, flags: 64 });
     }
 
     const embed = new EmbedBuilder()
@@ -95,6 +94,9 @@ module.exports = {
     }
 
     await interaction.reply({ embeds: [embed] });
+  }
+};
+
   }
 };
 
