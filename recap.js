@@ -1,4 +1,5 @@
 // recap.js
+// recap.js
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { DateTime } = require('luxon');
 
@@ -22,22 +23,13 @@ async function collectRecap(channel, start, end) {
   for (const msg of messages.values()) {
     if (!msg.embeds || msg.embeds.length === 0) continue;
     const embed = msg.embeds[0];
-    console.log(`[DEBUG] Embed détecté :`, embed);
     if (!embed.fields || embed.fields.length === 0 || !embed.timestamp) continue;
 
-    const msgDate = DateTime.fromISO(embed.timestamp);
+    const msgDate = DateTime.fromISO(embed.timestamp).setZone('Europe/Paris');
     if (msgDate < start || msgDate > end) continue;
 
-    let nameLine = embed.author?.name || embed.title || '';
-    let nameMatch = nameLine.match(/([A-Z][a-z]+(?: [A-Z][a-z]+)+)/);
-
-    // fallback : essayer de lire le nom dans le 1er champ texte s’il n’est pas dans le titre
-    if (!nameMatch && embed.fields.length >= 1) {
-      const possibleName = embed.fields[0].value?.trim();
-      const altMatch = possibleName?.match(/([A-Z][a-z]+(?: [A-Z][a-z]+)+)/);
-      if (altMatch) nameMatch = altMatch;
-    }
-
+    const nameLine = embed.author?.name || embed.title || '';
+    const nameMatch = nameLine.match(/([A-Z][a-z]+ [A-Z][a-z]+)/);
     if (!nameMatch) continue;
     const name = nameMatch[1];
 
