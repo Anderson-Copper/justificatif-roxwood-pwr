@@ -1,8 +1,11 @@
-// cost.js
+// recap.js
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { DateTime } = require('luxon');
 
-const COST_CHANNEL_ID = '1379479480208461884';
+const CHANNELS = {
+  depot: '1375152581307007056',
+  prod: '1376982976176324648'
+};
 
 function getWeekDateRange(weekCode) {
   const match = weekCode.match(/^S(\d{1,2})$/i);
@@ -14,27 +17,28 @@ function getWeekDateRange(weekCode) {
   return { start, end };
 }
 
-async function collectCosts(channel, start, end) {
+async function collectRecap(channel, start, end) {
   const messages = await channel.messages.fetch({ limit: 100 });
   const data = {};
 
   for (const msg of messages.values()) {
-    const msgDate = DateTime.fromJSDate(msg.createdAt).setZone('Europe/Paris');
-    if (msgDate < start || msgDate > end) continue;
+    if (!msg.embeds?.length) continue;
+    const embed = msg.embeds[0];
+    const fields = embed.fields || [];
+    const date = DateTime.fromJSDate(msg.createdAt).setZone('Europe/Paris');
+    if (date < start || date > end) continue;
 
-    const content = msg.content;
-    console.log('[DEBUG] Contenu message :', content);
+    let nom = null, quantite = null, salaire = null;
+    for (const field of fields) {
+      if (field.name.toLowerCase().includes('nom')) nom = field.value;
+      if (field.name.toLowerCase().includes('quantité')) quantite = parseInt(field.value);
+      if (field.name.toLowerCase().includes('salaire')) salaire = parseInt(field.value);
+    }
 
-    const nomMatch = content.match(/Nom Prénom ?: (.+)/i);
-    const montantMatch = content.match(/Prix final ?: ?(\d+)/i);
-
-    if (!nomMatch || !montantMatch) continue;
-
-    const nom = nomMatch[1].trim();
-    const montant = parseInt(montantMatch[1], 10);
-
-    if (!data[nom]) data[nom] = 0;
-    data[nom] += montant;
+    if (!nom || !quantite || !salaire) continue;
+    if (!data[nom]) data[nom] = { quantite: 0, salaire: 0 };
+    data[nom].quantite += quantite;
+    data[nom].salaire += salaire;
   }
 
   return data;
@@ -42,38 +46,50 @@ async function collectCosts(channel, start, end) {
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('cost')
-    .setDescription('Affiche le récapitulatif des frais véhicules pour une semaine donnée.')
-    .addStringOption(option =>
-      option.setName('semaine')
-        .setDescription('Code semaine (ex: S23)')
+    .setName('recap')
+    .setDescription('Affiche un récapitulatif des livraisons ou production pour une semaine.')
+    .addStringOption(opt =>
+      opt.setName('type')
+        .setDescription('Choisissez le type de récapitulatif')
         .setRequired(true)
-    ),
+        .addChoices(
+          { name: 'Dépôt', value: 'depot' },
+          { name: 'Production', value: 'prod' }
+        ))
+    .addStringOption(opt =>
+      opt.setName('semaine')
+        .setDescription('Code semaine (ex: S23)')
+        .setRequired(true)),
 
   async execute(interaction) {
     const semaine = interaction.options.getString('semaine');
+    const type = interaction.options.getString('type');
     const dates = getWeekDateRange(semaine);
     if (!dates) return interaction.reply({ content: 'Code semaine invalide.', flags: 64 });
 
-    const channel = await interaction.client.channels.fetch(COST_CHANNEL_ID);
+    const channelId = CHANNELS[type];
+    const channel = await interaction.client.channels.fetch(channelId);
     if (!channel) return interaction.reply({ content: 'Salon introuvable.', flags: 64 });
 
-    const costs = await collectCosts(channel, dates.start, dates.end);
-
-    if (Object.keys(costs).length === 0) {
+    const data = await collectRecap(channel, dates.start, dates.end);
+    if (Object.keys(data).length === 0) {
       return interaction.reply({ content: `Aucune donnée trouvée pour la semaine ${semaine}.`, flags: 64 });
     }
 
+    const chunk = Object.entries(data);
     const embeds = [];
-    const chunk = Object.entries(costs);
     for (let i = 0; i < chunk.length; i += 25) {
       const embed = new EmbedBuilder()
-        .setTitle(`Frais Véhicules - Semaine ${semaine}`)
-        .setColor(0xe74c3c)
+        .setTitle(`Récapitulatif ${type === 'depot' ? 'Livraisons' : 'Production'} - Semaine ${semaine}`)
+        .setColor(type === 'depot' ? 0x3498db : 0xf39c12)
         .setTimestamp(new Date());
 
-      for (const [nom, montant] of chunk.slice(i, i + 25)) {
-        embed.addFields({ name: nom, value: `Total : **$${montant}**`, inline: false });
+      for (const [nom, { quantite, salaire }] of chunk.slice(i, i + 25)) {
+        embed.addFields({
+          name: nom,
+          value: `Quantité : **${quantite}**\nSalaire : **$${salaire}**`,
+          inline: false
+        });
       }
 
       embeds.push(embed);
