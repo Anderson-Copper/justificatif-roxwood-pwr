@@ -1,5 +1,4 @@
 // recap.js
-// recap.js
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { DateTime } = require('luxon');
 
@@ -21,11 +20,13 @@ async function collectRecap(channel, start, end) {
   const data = {};
 
   for (const msg of messages.values()) {
+    console.log('[DEBUG] Contenu message :', msg.content);
     if (!msg.embeds || msg.embeds.length === 0) continue;
     const embed = msg.embeds[0];
-    if (!embed.fields || embed.fields.length === 0 || !embed.timestamp) continue;
+    console.log('[DEBUG] Embed détecté :', embed);
+    if (!embed.fields || embed.fields.length === 0) continue;
 
-    const msgDate = DateTime.fromISO(embed.timestamp).setZone('Europe/Paris');
+    const msgDate = DateTime.fromJSDate(msg.createdAt).setZone('Europe/Paris');
     if (msgDate < start || msgDate > end) continue;
 
     const nameLine = embed.author?.name || embed.title || '';
@@ -36,7 +37,7 @@ async function collectRecap(channel, start, end) {
     const qtyField = embed.fields.find(f => f.name.toLowerCase().includes('quantit'));
     const salaireField = embed.fields.find(f => f.name.toLowerCase().includes('salaire'));
     const qty = parseInt(qtyField?.value || '0');
-    const salaire = parseInt(salaireField?.value || '0');
+    const salaire = parseInt(salaireField?.value.replace(/[^\d]/g, '') || '0');
 
     if (!data[name]) data[name] = { quantite: 0, salaire: 0 };
     data[name].quantite += qty;
