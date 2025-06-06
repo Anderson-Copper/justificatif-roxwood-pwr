@@ -1,3 +1,17 @@
-"scripts": {
-  "start": "node index.js"
+{
+  "name": "intendant-roxwood-pwr",
+  "version": "1.0.0",
+  "description": "Déploiement + exécution des commandes slash du bot Intendant de Roxwood PWR",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.0.3",
+    "luxon": "^3.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
