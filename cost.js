@@ -2,7 +2,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { DateTime } = require('luxon');
 
-const COST_CHANNEL_ID = '1375152581307007056';
+const COST_CHANNEL_ID = '1379479480208461884';
 
 function getWeekDateRange(weekCode) {
   const match = weekCode.match(/^S(\d{1,2})$/i);
@@ -23,21 +23,18 @@ async function collectCosts(channel, start, end) {
     if (msgDate < start || msgDate > end) continue;
 
     const content = msg.content;
-    console.log(`[DEBUG] Contenu message :`, content);
+    console.log('[DEBUG] Contenu message :', content);
 
-    let nameMatch = content.match(/Nom Prénom *: *(.+)/i);
-    const altNameMatch = content.match(/([A-Z][a-z]+(?: [A-Z][a-z]+)+)/);
-    if (!nameMatch && altNameMatch) {
-      nameMatch = [null, altNameMatch[1]];
-    }
+    const nomMatch = content.match(/Nom Pr\u00e9nom ?: (.+)/i);
+    const montantMatch = content.match(/Prix final ?: ?(\d+)/i);
 
-    const costMatch = content.match(/Prix final *: *\$?(\d+)/i);
-    if (!nameMatch || !costMatch) continue;
+    if (!nomMatch || !montantMatch) continue;
 
-    const name = nameMatch[1].trim();
-    const cost = parseInt(costMatch[1]);
-    if (!data[name]) data[name] = 0;
-    data[name] += cost;
+    const nom = nomMatch[1].trim();
+    const montant = parseInt(montantMatch[1], 10);
+
+    if (!data[nom]) data[nom] = 0;
+    data[nom] += montant;
   }
 
   return data;
@@ -46,7 +43,7 @@ async function collectCosts(channel, start, end) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('cost')
-    .setDescription('Génère un récapitulatif des frais de véhicules pour une semaine donnée.')
+    .setDescription('Affiche le r\u00e9capitulatif des frais v\u00e9hicules pour une semaine donn\u00e9e.')
     .addStringOption(option =>
       option.setName('semaine')
         .setDescription('Code semaine (ex: S23)')
@@ -61,22 +58,19 @@ module.exports = {
     const channel = await interaction.client.channels.fetch(COST_CHANNEL_ID);
     if (!channel) return interaction.reply({ content: 'Salon introuvable.', flags: 64 });
 
-    const costData = await collectCosts(channel, dates.start, dates.end);
-    if (Object.keys(costData).length === 0) {
-      return interaction.reply({ content: `Aucune donnée trouvée pour la semaine ${semaine}.`, flags: 64 });
+    const costs = await collectCosts(channel, dates.start, dates.end);
+
+    if (Object.keys(costs).length === 0) {
+      return interaction.reply({ content: `Aucune donn\u00e9e trouv\u00e9e pour la semaine ${semaine}.`, flags: 64 });
     }
 
     const embed = new EmbedBuilder()
-      .setTitle(`Récapitulatif Frais Véhicules - ${semaine}`)
-      .setColor(0xe67e22)
+      .setTitle(`Frais V\u00e9hicules - Semaine ${semaine}`)
+      .setColor(0xe74c3c)
       .setTimestamp(new Date());
 
-    for (const [nom, total] of Object.entries(costData)) {
-      embed.addFields({
-        name: nom,
-        value: `Frais totaux : **$${total}**`,
-        inline: false
-      });
+    for (const [nom, montant] of Object.entries(costs)) {
+      embed.addFields({ name: nom, value: `Total : **$${montant}**`, inline: false });
     }
 
     await interaction.reply({ embeds: [embed] });
