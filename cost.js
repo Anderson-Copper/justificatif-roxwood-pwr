@@ -25,7 +25,7 @@ async function collectCosts(channel, start, end) {
     const content = msg.content;
     console.log('[DEBUG] Contenu message :', content);
 
-    const nomMatch = content.match(/Nom Pr\u00e9nom ?: (.+)/i);
+    const nomMatch = content.match(/Nom Prénom ?: (.+)/i);
     const montantMatch = content.match(/Prix final ?: ?(\d+)/i);
 
     if (!nomMatch || !montantMatch) continue;
@@ -43,7 +43,7 @@ async function collectCosts(channel, start, end) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('cost')
-    .setDescription('Affiche le r\u00e9capitulatif des frais v\u00e9hicules pour une semaine donn\u00e9e.')
+    .setDescription('Affiche le récapitulatif des frais véhicules pour une semaine donnée.')
     .addStringOption(option =>
       option.setName('semaine')
         .setDescription('Code semaine (ex: S23)')
@@ -61,19 +61,25 @@ module.exports = {
     const costs = await collectCosts(channel, dates.start, dates.end);
 
     if (Object.keys(costs).length === 0) {
-      return interaction.reply({ content: `Aucune donn\u00e9e trouv\u00e9e pour la semaine ${semaine}.`, flags: 64 });
+      return interaction.reply({ content: `Aucune donnée trouvée pour la semaine ${semaine}.`, flags: 64 });
     }
 
-    const embed = new EmbedBuilder()
-      .setTitle(`Frais V\u00e9hicules - Semaine ${semaine}`)
-      .setColor(0xe74c3c)
-      .setTimestamp(new Date());
+    const embeds = [];
+    const chunk = Object.entries(costs);
+    for (let i = 0; i < chunk.length; i += 25) {
+      const embed = new EmbedBuilder()
+        .setTitle(`Frais Véhicules - Semaine ${semaine}`)
+        .setColor(0xe74c3c)
+        .setTimestamp(new Date());
 
-    for (const [nom, montant] of Object.entries(costs)) {
-      embed.addFields({ name: nom, value: `Total : **$${montant}**`, inline: false });
+      for (const [nom, montant] of chunk.slice(i, i + 25)) {
+        embed.addFields({ name: nom, value: `Total : **$${montant}**`, inline: false });
+      }
+
+      embeds.push(embed);
     }
 
-    await interaction.reply({ embeds: [embed] });
+    await interaction.reply({ embeds });
   }
 };
 
