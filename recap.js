@@ -20,9 +20,9 @@ function getWeekDateRange(weekCode) {
 async function collectRecap(channel, start, end) {
   let before;
   const data = {};
-  let fetchComplete = false;
+  let keepFetching = true;
 
-  while (!fetchComplete) {
+  while (keepFetching) {
     const options = { limit: 100 };
     if (before) options.before = before;
 
@@ -34,11 +34,12 @@ async function collectRecap(channel, start, end) {
       const embed = msg.embeds[0];
       const fields = embed.fields || [];
       const date = DateTime.fromJSDate(msg.createdAt).setZone('Europe/Paris');
-      if (date < start) {
-        fetchComplete = true;
-        break;
-      }
+
+      // Debug progression
+      console.log(`[DEBUG] Lecture message du : ${date.toISODate()} - Auteur: ${embed.author?.name || 'Inconnu'}`);
+
       if (date > end) continue;
+      if (date < start) continue;
 
       let nom = msg.author?.username || 'Inconnu';
       if (embed.author?.name) nom = embed.author.name;
@@ -57,7 +58,14 @@ async function collectRecap(channel, start, end) {
       data[nom].salaire += salaire;
     }
 
-    before = messages.last().id;
+    const oldestMessage = messages.last();
+    if (oldestMessage) {
+      const oldestDate = DateTime.fromJSDate(oldestMessage.createdAt).setZone('Europe/Paris');
+      if (oldestDate < start) keepFetching = false;
+      before = oldestMessage.id;
+    } else {
+      keepFetching = false;
+    }
   }
 
   return data;
