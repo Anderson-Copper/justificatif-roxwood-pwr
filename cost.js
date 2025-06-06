@@ -2,7 +2,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { DateTime } = require('luxon');
 
-const COST_CHANNEL_ID = '1379479480208461884'; // mis à jour pour Logs-Dépôts-Livraison
+const COST_CHANNEL_ID = '1375152581307007056';
 
 function getWeekDateRange(weekCode) {
   const match = weekCode.match(/^S(\d{1,2})$/i);
@@ -24,7 +24,13 @@ async function collectCosts(channel, start, end) {
 
     const content = msg.content;
     console.log(`[DEBUG] Contenu message :`, content);
-    const nameMatch = content.match(/Nom Prénom *: *(.+)/i);
+
+    let nameMatch = content.match(/Nom Prénom *: *(.+)/i);
+    const altNameMatch = content.match(/([A-Z][a-z]+(?: [A-Z][a-z]+)+)/);
+    if (!nameMatch && altNameMatch) {
+      nameMatch = [null, altNameMatch[1]];
+    }
+
     const costMatch = content.match(/Prix final *: *\$?(\d+)/i);
     if (!nameMatch || !costMatch) continue;
 
