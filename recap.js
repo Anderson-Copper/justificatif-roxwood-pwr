@@ -18,31 +18,46 @@ function getWeekDateRange(weekCode) {
 }
 
 async function collectRecap(channel, start, end) {
-  const messages = await channel.messages.fetch({ limit: 100 });
+  let before;
   const data = {};
+  let fetchComplete = false;
 
-  for (const msg of messages.values()) {
-    if (!msg.embeds?.length) continue;
-    const embed = msg.embeds[0];
-    const fields = embed.fields || [];
-    const date = DateTime.fromJSDate(msg.createdAt).setZone('Europe/Paris');
-    if (date < start || date > end) continue;
+  while (!fetchComplete) {
+    const options = { limit: 100 };
+    if (before) options.before = before;
 
-    let nom = msg.author?.username || 'Inconnu';
-    if (embed.author?.name) nom = embed.author.name;
-    const nomMatch = nom.match(/([A-Z][a-z]+ [A-Z][a-z]+)/);
-    if (nomMatch) nom = nomMatch[1];
+    const messages = await channel.messages.fetch(options);
+    if (messages.size === 0) break;
 
-    let quantite = null, salaire = null;
-    for (const field of fields) {
-      if (field.name.toLowerCase().includes('quantité')) quantite = parseInt(field.value);
-      if (field.name.toLowerCase().includes('salaire')) salaire = parseInt(field.value);
+    for (const msg of messages.values()) {
+      if (!msg.embeds?.length) continue;
+      const embed = msg.embeds[0];
+      const fields = embed.fields || [];
+      const date = DateTime.fromJSDate(msg.createdAt).setZone('Europe/Paris');
+      if (date < start) {
+        fetchComplete = true;
+        break;
+      }
+      if (date > end) continue;
+
+      let nom = msg.author?.username || 'Inconnu';
+      if (embed.author?.name) nom = embed.author.name;
+      const nomMatch = nom.match(/([A-Z][a-z]+ [A-Z][a-z]+)/);
+      if (nomMatch) nom = nomMatch[1];
+
+      let quantite = null, salaire = null;
+      for (const field of fields) {
+        if (field.name.toLowerCase().includes('quantité')) quantite = parseInt(field.value);
+        if (field.name.toLowerCase().includes('salaire')) salaire = parseInt(field.value);
+      }
+
+      if (!quantite || !salaire) continue;
+      if (!data[nom]) data[nom] = { quantite: 0, salaire: 0 };
+      data[nom].quantite += quantite;
+      data[nom].salaire += salaire;
     }
 
-    if (!quantite || !salaire) continue;
-    if (!data[nom]) data[nom] = { quantite: 0, salaire: 0 };
-    data[nom].quantite += quantite;
-    data[nom].salaire += salaire;
+    before = messages.last().id;
   }
 
   return data;
@@ -105,4 +120,3 @@ module.exports = {
     await interaction.reply({ content: `Récapitulatif ${type} envoyé pour la semaine ${semaine}.`, flags: 64 });
   }
 };
-
