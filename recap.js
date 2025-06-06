@@ -22,6 +22,7 @@ async function collectRecap(channel, start, end) {
   for (const msg of messages.values()) {
     if (!msg.embeds || msg.embeds.length === 0) continue;
     const embed = msg.embeds[0];
+    console.log(`[DEBUG] Embed détecté :`, embed);
     if (!embed.fields || embed.fields.length === 0 || !embed.timestamp) continue;
 
     const msgDate = DateTime.fromISO(embed.timestamp);
