@@ -28,14 +28,14 @@ async function collectRecap(channel, start, end) {
     const date = DateTime.fromJSDate(msg.createdAt).setZone('Europe/Paris');
     if (date < start || date > end) continue;
 
-    let nom = null, quantite = null, salaire = null;
+    let nom = msg.member?.displayName || msg.author?.username || 'Inconnu';
+    let quantite = null, salaire = null;
     for (const field of fields) {
-      if (field.name.toLowerCase().includes('nom')) nom = field.value;
       if (field.name.toLowerCase().includes('quantité')) quantite = parseInt(field.value);
       if (field.name.toLowerCase().includes('salaire')) salaire = parseInt(field.value);
     }
 
-    if (!nom || !quantite || !salaire) continue;
+    if (!quantite || !salaire) continue;
     if (!data[nom]) data[nom] = { quantite: 0, salaire: 0 };
     data[nom].quantite += quantite;
     data[nom].salaire += salaire;
