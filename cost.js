@@ -9,7 +9,7 @@ function getWeekDateRange(weekCode) {
   if (!match) return null;
   const weekNumber = parseInt(match[1], 10);
   const year = 2025;
-  const start = DateTime.fromObject({ weekYear: year, weekNumber, weekday: 1, zone: 'Europe/Paris' }).startOf('day');
+  const start = DateTime.fromObject({ weekYear: year, weekNumber, weekday: 1 }).setZone('Europe/Paris').startOf('day');
   const end = start.plus({ days: 6 }).endOf('day');
   return { start, end };
 }
@@ -49,14 +49,14 @@ module.exports = {
   async execute(interaction) {
     const semaine = interaction.options.getString('semaine');
     const dates = getWeekDateRange(semaine);
-    if (!dates) return interaction.reply({ content: 'Code semaine invalide.', ephemeral: true });
+    if (!dates) return interaction.reply({ content: 'Code semaine invalide.', flags: 64 });
 
     const channel = await interaction.client.channels.fetch(COST_CHANNEL_ID);
-    if (!channel) return interaction.reply({ content: 'Salon introuvable.', ephemeral: true });
+    if (!channel) return interaction.reply({ content: 'Salon introuvable.', flags: 64 });
 
     const costData = await collectCosts(channel, dates.start, dates.end);
     if (Object.keys(costData).length === 0) {
-      return interaction.reply({ content: `Aucune donnée trouvée pour la semaine ${semaine}.`, ephemeral: true });
+      return interaction.reply({ content: `Aucune donnée trouvée pour la semaine ${semaine}.`, flags: 64 });
     }
 
     const embed = new EmbedBuilder()
